@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/kongkiat/Downloads/api-team-firebase_1.html -->
+<html lang="th"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Team — Firebase</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./API Team — Firebase_files/css2" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#eef1f6;
+    --card:#ffffff;
+    --ink:#161a22;
+    --muted:#6b7280;
+    --line:#e2e6ee;
+    --accent:#3a5bff;
+    --accent-soft:#eaeeff;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Inter",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 64px;}
+
+  .status-bar{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    background:var(--ink);
+    color:#cfd6e4;
+    border-radius:var(--radius);
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:#999;flex:none;}
+  .dot.ok{background:var(--ok);box-shadow:0 0 0 4px rgba(22,163,74,.18);}
+  .dot.bad{background:var(--bad);box-shadow:0 0 0 4px rgba(220,38,38,.18);}
+
+  h1{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:26px;
+    letter-spacing:-.5px;
+    margin:0 0 4px;
+  }
+  .sub{color:var(--muted);font-size:14px;margin:0 0 28px;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:20px;
+  }
+  label{display:block;font-size:13px;font-weight:500;margin:0 0 6px;color:var(--ink);}
+  .field{margin-bottom:14px;}
+  input,select{
+    width:100%;
+    padding:10px 12px;
+    font-size:15px;
+    font-family:inherit;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fbfcfe;
+    color:var(--ink);
+  }
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    border-radius:8px;
+  }
+  .btn-save{
+    width:100%;
+    background:var(--accent);
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    padding:12px;
+  }
+  .btn-save:hover{filter:brightness(1.05);}
+  .btn-save:disabled{opacity:.5;cursor:not-allowed;}
+
+  .list-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
+  .list-head h2{font-size:16px;margin:0;}
+  .count{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--muted);}
+
+  .row{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 0;border-top:1px solid var(--line);
+  }
+  .row:first-child{border-top:none;}
+  .row .name{font-weight:600;}
+  .row .meta{font-size:13px;color:var(--muted);}
+  .badge{
+    font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
+    padding:3px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent);
+  }
+  .spacer{flex:1;}
+  .btn-del{
+    background:transparent;color:var(--bad);font-size:13px;padding:6px 10px;
+    border:1px solid transparent;
+  }
+  .btn-del:hover{border-color:var(--bad);}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:24px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="status-bar">
+    <span class="dot ok" id="dot"></span>
+    <span id="statusText">firebase: connected ●</span>
+  </div>
+
+  <h1>API Team</h1>
+  <p class="sub">บันทึกข้อมูลทีมเก็บถาวรบน Firebase ทุกคนที่เปิดหน้านี้จะเห็นข้อมูลชุดเดียวกัน และอัปเดตแบบเรียลไทม์</p>
+
+  <!-- ฟอร์มเพิ่มข้อมูล -->
+  <div class="card">
+    <div class="field">
+      <label for="name">ชื่อ</label>
+      <input id="name" type="text" placeholder="เช่น สมชาย ใจดี">
+    </div>
+    <div class="field">
+      <label for="team">ทีม</label>
+      <input id="team" type="text" placeholder="เช่น API, Web, Mobile">
+    </div>
+    <div class="field">
+      <label for="status">สถานะ</label>
+      <select id="status">
+        <option value="Active">Active</option>
+        <option value="Leave">Leave</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+    <button class="btn-save" id="saveBtn">บันทึกลง Firebase</button>
+  </div>
+
+  <!-- รายการข้อมูล -->
+  <div class="card">
+    <div class="list-head">
+      <h2>รายชื่อทั้งหมด</h2>
+      <span class="count" id="count">0 รายการ</span>
+    </div>
+    <div id="list"><div class="empty">ยังไม่มีข้อมูล ลองเพิ่มด้านบน</div></div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     สคริปต์ Firebase (โมดูล ES6 v10) — config ใส่ให้แล้ว
+     ============================================================ -->
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, deleteDoc, doc,
+    onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // 🔑 ค่า config ของโปรเจกต์ api-team-38970
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2tPs3_mfkX70HOC6OnfNH6mC1ld3Vzwc",
+    authDomain: "api-team-38970.firebaseapp.com",
+    projectId: "api-team-38970",
+    storageBucket: "api-team-38970.firebasestorage.app",
+    messagingSenderId: "882231702606",
+    appId: "1:882231702606:web:409170e47f5508136f7f1f",
+    measurementId: "G-K1HRFJJTY3"
+  };
+
+  // ---- ตัวแปร UI ----
+  const dot = document.getElementById("dot");
+  const statusText = document.getElementById("statusText");
+  const listEl = document.getElementById("list");
+  const countEl = document.getElementById("count");
+  const saveBtn = document.getElementById("saveBtn");
+
+  function setStatus(state, text){
+    dot.className = "dot " + state;
+    statusText.textContent = "firebase: " + text;
+  }
+
+  let db, colRef;
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    colRef = collection(db, "members");
+    setStatus("ok", "connected ●");
+
+    const q = query(colRef, orderBy("createdAt", "desc"));
+    onSnapshot(q, (snap) => {
+      render(snap);
+    }, (err) => {
+      setStatus("bad", "read error — เช็ค Rules");
+      console.error(err);
+    });
+  } catch (err) {
+    setStatus("bad", "config ผิด — " + err.message);
+    console.error(err);
+  }
+
+  // ---- บันทึกข้อมูล ----
+  saveBtn.addEventListener("click", async () => {
+    const name = document.getElementById("name").value.trim();
+    const team = document.getElementById("team").value.trim();
+    const status = document.getElementById("status").value;
+
+    if (!name) { alert("กรุณากรอกชื่อ"); return; }
+    if (!db)   { alert("ยังเชื่อม Firebase ไม่ได้ ตรวจค่า config"); return; }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "กำลังบันทึก…";
+    try {
+      await addDoc(colRef, { name, team, status, createdAt: serverTimestamp() });
+      document.getElementById("name").value = "";
+      document.getElementById("team").value = "";
+    } catch (err) {
+      alert("บันทึกไม่สำเร็จ: " + err.message);
+      console.error(err);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "บันทึกลง Firebase";
+    }
+  });
+
+  // ---- ลบข้อมูล ----
+  window.removeMember = async (id) => {
+    if (!confirm("ลบรายการนี้?")) return;
+    try { await deleteDoc(doc(db, "members", id)); }
+    catch (err) { alert("ลบไม่สำเร็จ: " + err.message); }
+  };
+
+  // ---- วาดรายการ ----
+  function render(snap){
+    countEl.textContent = snap.size + " รายการ";
+    if (snap.empty){
+      listEl.innerHTML = '<div class="empty">ยังไม่มีข้อมูล ลองเพิ่มด้านบน</div>';
+      return;
+    }
+    let html = "";
+    snap.forEach((d) => {
+      const m = d.data();
+      const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c =>
+        ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+      html += `
+        <div class="row">
+          <div>
+            <div class="name">${esc(m.name)}</div>
+            <div class="meta">${esc(m.team) || "—"}</div>
+          </div>
+          <span class="badge">${esc(m.status)}</span>
+          <span class="spacer"></span>
+          <button class="btn-del" onclick="removeMember('${d.id}')">ลบ</button>
+        </div>`;
+    });
+    listEl.innerHTML = html;
+  }
+</script>
+
+
+</body></html>
