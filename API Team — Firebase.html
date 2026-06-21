@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0058)file:///C:/Users/kongkiat/Downloads/api-team-firebase.html -->
+<!-- saved from url=(0060)file:///C:/Users/kongkiat/Downloads/api-team-firebase_1.html -->
 <html lang="th"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +33,6 @@
   }
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 64px;}
 
-  /* แถบสถานะแบบ terminal */
   .status-bar{
     font-family:"JetBrains Mono",monospace;
     font-size:13px;
@@ -165,8 +164,7 @@
 </div>
 
 <!-- ============================================================
-     สคริปต์ Firebase (โมดูล ES6 v10)
-     *** แก้ค่าใน firebaseConfig ให้เป็นของโปรเจกต์คุณเอง ***
+     สคริปต์ Firebase (โมดูล ES6 v10) — config ใส่ให้แล้ว
      ============================================================ -->
 <script type="module">
   import { initializeApp }
@@ -176,28 +174,16 @@
     onSnapshot, query, orderBy, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔑 วางค่า config ของคุณตรงนี้ (คัดลอกจากหน้า Firebase Console)
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC2tPs3_mfkX70HOC6OnfNH6mC1ld3Vzwc",
-  authDomain: "api-team-38970.firebaseapp.com",
-  projectId: "api-team-38970",
-  storageBucket: "api-team-38970.firebasestorage.app",
-  messagingSenderId: "882231702606",
-  appId: "1:882231702606:web:409170e47f5508136f7f1f",
-  measurementId: "G-K1HRFJJTY3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+  // 🔑 ค่า config ของโปรเจกต์ api-team-38970
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2tPs3_mfkX70HOC6OnfNH6mC1ld3Vzwc",
+    authDomain: "api-team-38970.firebaseapp.com",
+    projectId: "api-team-38970",
+    storageBucket: "api-team-38970.firebasestorage.app",
+    messagingSenderId: "882231702606",
+    appId: "1:882231702606:web:409170e47f5508136f7f1f",
+    measurementId: "G-K1HRFJJTY3"
+  };
 
   // ---- ตัวแปร UI ----
   const dot = document.getElementById("dot");
@@ -207,7 +193,7 @@ const analytics = getAnalytics(app);
   const saveBtn = document.getElementById("saveBtn");
 
   function setStatus(state, text){
-    dot.className = "dot " + state;          // "ok" | "bad" | ""
+    dot.className = "dot " + state;
     statusText.textContent = "firebase: " + text;
   }
 
@@ -215,10 +201,9 @@ const analytics = getAnalytics(app);
   try {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
-    colRef = collection(db, "members");      // ชื่อ collection ใน Firestore
+    colRef = collection(db, "members");
     setStatus("ok", "connected ●");
 
-    // อ่านข้อมูลแบบเรียลไทม์ เรียงตามเวลาล่าสุด
     const q = query(colRef, orderBy("createdAt", "desc"));
     onSnapshot(q, (snap) => {
       render(snap);
@@ -227,11 +212,11 @@ const analytics = getAnalytics(app);
       console.error(err);
     });
   } catch (err) {
-    setStatus("bad", "config ผิด — ยังไม่ได้ใส่ค่า");
+    setStatus("bad", "config ผิด — " + err.message);
     console.error(err);
   }
 
-  // ---- บันทึกข้อมูล (เขียนลง Firebase) ----
+  // ---- บันทึกข้อมูล ----
   saveBtn.addEventListener("click", async () => {
     const name = document.getElementById("name").value.trim();
     const team = document.getElementById("team").value.trim();
@@ -262,7 +247,7 @@ const analytics = getAnalytics(app);
     catch (err) { alert("ลบไม่สำเร็จ: " + err.message); }
   };
 
-  // ---- วาดรายการลงหน้าจอ ----
+  // ---- วาดรายการ ----
   function render(snap){
     countEl.textContent = snap.size + " รายการ";
     if (snap.empty){
